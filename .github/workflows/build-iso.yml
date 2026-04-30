@@ -1,0 +1,43 @@
+name: Build ISO
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build-iso:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          df -h
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Build installer ISO
+        run: |
+          nix build --no-write-lock-file -L .#nixosConfigurations.iso.config.system.build.isoImage
+          ls -lah result/iso
+
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: phosphor-iso-${{ github.sha }}
+          path: result/iso/*.iso
+          if-no-files-found: error
