@@ -12,15 +12,15 @@ fail() {
 }
 
 prompt() {
-  printf '%s' "$1"
+  printf '%s' "$1" > /dev/tty
 }
 
 prompt_password() {
   prompt "$1"
-  stty -echo
-  IFS= read -r password
-  stty echo
-  printf '\n'
+  stty -echo < /dev/tty
+  IFS= read -r password < /dev/tty
+  stty echo < /dev/tty
+  printf '\n' > /dev/tty
   printf '%s' "$password"
 }
 

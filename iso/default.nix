@@ -20,6 +20,7 @@
     vim
     gptfdisk
     parted
+    e2fsprogs
     (writeShellScriptBin "phosphor-install" ''
       exec ${pkgs.bash}/bin/bash /etc/phosphor-install/installer.sh "$@"
     '')
