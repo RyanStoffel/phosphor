@@ -59,7 +59,7 @@
         modules = [
           ./iso/default.nix
           self.nixosModules.default
-          "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-graphical-base.nix"
+          "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
         ];
       };
     };

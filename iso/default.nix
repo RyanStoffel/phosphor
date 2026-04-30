@@ -2,10 +2,18 @@
 {
   isoImage.squashfsCompression = "zstd -Xcompression-level 6";
 
+  systemd.defaultUnit = "multi-user.target";
+
   networking.hostName = "phosphor-installer";
   networking.networkmanager.enable = true;
 
+  programs.niri.enable = lib.mkForce false;
+
+  services.greetd.enable = lib.mkForce false;
+
   services.getty.autologinUser = lib.mkForce "nixos";
+
+  xdg.portal.enable = lib.mkForce false;
 
   environment.systemPackages = with pkgs; [
     git
