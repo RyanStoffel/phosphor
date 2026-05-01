@@ -17,7 +17,7 @@
   config = {
     networking.hostName = lib.mkDefault config.phosphor.hostname;
 
-    time.timeZone = lib.mkDefault "America/New_York";
+    time.timeZone = lib.mkDefault "UTC";
     i18n.defaultLocale = lib.mkDefault "en_US.UTF-8";
 
     nix = {

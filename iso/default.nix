@@ -15,9 +15,17 @@
 
   xdg.portal.enable = lib.mkForce false;
 
+  environment.loginShellInit = ''
+    if [ -z "''${PHOSPHOR_INSTALLER_STARTED-}" ] && [ "$(tty 2>/dev/null)" = "/dev/tty1" ]; then
+      export PHOSPHOR_INSTALLER_STARTED=1
+      exec phosphor-install
+    fi
+  '';
+
   environment.systemPackages = with pkgs; [
     git
     vim
+    gum
     gptfdisk
     parted
     e2fsprogs
@@ -28,44 +36,4 @@
 
   environment.etc."phosphor-install/installer.sh".source = ./installer.sh;
   environment.etc."phosphor-install/phosphor".source = ../.;
-
-  environment.etc."phosphor-install/flake.nix".text = ''
-    {
-      description = "My Phosphor configuration";
-
-      inputs = {
-        nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-        home-manager = {
-          url = "github:nix-community/home-manager";
-          inputs.nixpkgs.follows = "nixpkgs";
-        };
-        phosphor.url = "path:./phosphor";
-      };
-
-      outputs = { nixpkgs, home-manager, phosphor, ... } @ inputs:
-      {
-        nixosConfigurations.phosphor = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = { inherit inputs; };
-          modules = [
-            phosphor.nixosModules.default
-            home-manager.nixosModules.home-manager
-            ./hardware-configuration.nix
-            {
-              phosphor.username = "__USERNAME__";
-              phosphor.hostname = "phosphor";
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.sharedModules = [ phosphor.homeManagerModules.default ];
-              home-manager.users.__USERNAME__ = { ... }: {
-                home.stateVersion = "25.05";
-                home.username = "__USERNAME__";
-                home.homeDirectory = "/home/__USERNAME__";
-              };
-            }
-          ];
-        };
-      };
-    }
-  '';
 }
