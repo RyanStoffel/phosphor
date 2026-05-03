@@ -16,9 +16,12 @@
   xdg.portal.enable = lib.mkForce false;
 
   environment.loginShellInit = ''
-    if [ -z "''${PHOSPHOR_INSTALLER_STARTED-}" ] && [ "$(tty 2>/dev/null)" = "/dev/tty1" ]; then
+    if [ ! -e /tmp/phosphor-installer-ran ] && [ "$(tty 2>/dev/null)" = "/dev/tty1" ]; then
+      touch /tmp/phosphor-installer-ran
       export PHOSPHOR_INSTALLER_STARTED=1
-      exec phosphor-install
+      if ! phosphor-install; then
+        printf '\nPhosphor installer exited with an error. Review /var/log/phosphor-install.log.\n'
+      fi
     fi
   '';
 

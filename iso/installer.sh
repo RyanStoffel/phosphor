@@ -7,7 +7,7 @@ if [ "$(id -u)" -ne 0 ]; then
 fi
 
 log_file="/var/log/phosphor-install.log"
-config_dir="/root/nixos"
+config_dir="/mnt/root/phosphor-installer"
 repo_source="/etc/phosphor-install/phosphor"
 
 : > "$log_file"
